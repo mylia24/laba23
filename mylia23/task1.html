@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language and Day Selection</title>
+    <style>
+        body {font-family: Arial, Helvetica, sans-serif;}
+
+        .modal {
+          display: none;
+          position: fixed;
+          z-index: 1;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+          background-color: #fefefe;
+          margin: 15% auto;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 500px;
+          text-align: center;
+        }
+        
+        .error {
+            margin: 10px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div id="languageModal" class="modal">
+  <div class="modal-content">
+    <p>Виберіть мову 'ua' або 'en'?</p>
+    <input type="text" id="languageInput">
+    <button onclick="submitLanguage()">OK</button>
+    <div id="errorLang" class="error"></div>
+  </div>
+</div>
+
+<div id="dayModal" class="modal">
+  <div class="modal-content">
+    <p id="dayQuestion"></p>
+    <input type="number" id="dayInput" min="1" max="7">
+    <button onclick="submitDay()">OK</button>
+    <div id="errorDay" class="error"></div>
+  </div>
+</div>
+
+<div id="resultModal" class="modal">
+  <div class="modal-content">
+    <p id="resultText"></p>
+  </div>
+</div>
+
+<script>
+    let choosenLanguage = ""
+    const data = {
+        languages: {
+            ua: {
+                submitDayText: "Введіть номер дня неділі від 1 до 7?",
+                errorText: "Неправильні дані. Спробуйте ще раз.",
+                days: ["Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота", "Неділя"]
+            },
+            en: {
+                submitDayText: "Enter the day number of the week (from 1 to 7)?",
+                errorText: "Incorrect data. Try again",
+                days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            }
+        },
+    };
+
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = "block"
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none"
+    }
+
+    function submitLanguage() {
+        const language = document.getElementById("languageInput").value.trim().toLowerCase();
+        const errorDiv = document.getElementById("errorLang");
+        if (language === "ua" || language === "en") {
+            choosenLanguage = language
+            document.getElementById("dayQuestion").innerText = data.languages[choosenLanguage].submitDayText;
+            closeModal("languageModal")
+            openModal("dayModal")
+        } else {
+            errorDiv.innerText = data.languages.ua.errorText;
+        }
+    }
+
+    function submitDay() {
+        const dayNumber = document.getElementById("dayInput").value;
+        const errorDiv = document.getElementById("errorDay");
+        if (!isNaN(dayNumber) && dayNumber >= 1 && dayNumber <= 7) {
+            document.getElementById("resultText").innerText = data.languages[choosenLanguage].days[dayNumber - 1];
+            closeModal("dayModal");
+            openModal("resultModal");
+        } else {
+            errorDiv.innerText = data.languages[choosenLanguage].errorText;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        openModal("languageModal");
+    });
+</script>
+
+</body>
+</html>
